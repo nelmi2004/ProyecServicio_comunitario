@@ -8,12 +8,24 @@
     ".NETCoreApp,Version=v10.0": {
       "ProyecServicio_comunitario/1.0.0": {
         "dependencies": {
+          "DotNetEnv": "3.2.0",
           "Microsoft.EntityFrameworkCore.Design": "10.0.7",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1",
           "Swashbuckle.AspNetCore": "10.1.7"
         },
         "runtime": {
           "ProyecServicio_comunitario.dll": {}
+        }
+      },
+      "DotNetEnv/3.2.0": {
+        "dependencies": {
+          "Superpower": "3.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/DotNetEnv.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
         }
       },
       "Humanizer.Core/2.14.1": {
@@ -417,6 +429,14 @@
           }
         }
       },
+      "Superpower/3.0.0": {
+        "runtime": {
+          "lib/net5.0/Superpower.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "3.0.0.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/10.1.7": {
         "dependencies": {
           "Swashbuckle.AspNetCore.Swagger": "10.1.7",
@@ -529,6 +549,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "DotNetEnv/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2q+PD+aJcRW9QuRcIv4F8WbvEDxI6cwxzZJec2i45cBY4cAKCAoW4ZPkApJ7H82wr6Yfmxx/0kb1nLnRmZrGZA==",
+      "path": "dotnetenv/3.2.0",
+      "hashPath": "dotnetenv.3.2.0.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",
@@ -655,6 +682,13 @@
       "sha512": "sha512-P6EwH0Q4xkaA264iNZDqCPhWt8pscfUGxXazDQg4noBfqjoOlk4hKWfvBjF9ZX3R/9JybRmmJfmxr2iBMj0EpA==",
       "path": "npgsql.entityframeworkcore.postgresql/10.0.1",
       "hashPath": "npgsql.entityframeworkcore.postgresql.10.0.1.nupkg.sha512"
+    },
+    "Superpower/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bjKbAYWePooCAvPxQq+3KnmcLfRggMyRoXmtBMlmCG71bdwBHrO6rmRJ2DRIodg5aztNcxeZXBUVWT+H+MZUhw==",
+      "path": "superpower/3.0.0",
+      "hashPath": "superpower.3.0.0.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/10.1.7": {
       "type": "package",

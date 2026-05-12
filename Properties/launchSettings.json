@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ProyecServicio_comunitario": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:36235;http://localhost:36236"
+    }
+  }
+}

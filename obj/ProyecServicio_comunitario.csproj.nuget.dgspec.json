@@ -1,29 +1,36 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\FLIA PEREZ LEON\\Documents\\ProyecServicio_comunitario\\ProyecServicio_comunitario.csproj": {}
+    "D:\\Programacion\\Practicas\\ASP.NET\\angel_api_comun\\ProyecServicio_comunitario.csproj": {}
   },
   "projects": {
-    "C:\\Users\\FLIA PEREZ LEON\\Documents\\ProyecServicio_comunitario\\ProyecServicio_comunitario.csproj": {
+    "D:\\Programacion\\Practicas\\ASP.NET\\angel_api_comun\\ProyecServicio_comunitario.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\FLIA PEREZ LEON\\Documents\\ProyecServicio_comunitario\\ProyecServicio_comunitario.csproj",
+        "projectUniqueName": "D:\\Programacion\\Practicas\\ASP.NET\\angel_api_comun\\ProyecServicio_comunitario.csproj",
         "projectName": "ProyecServicio_comunitario",
-        "projectPath": "C:\\Users\\FLIA PEREZ LEON\\Documents\\ProyecServicio_comunitario\\ProyecServicio_comunitario.csproj",
-        "packagesPath": "C:\\Users\\FLIA PEREZ LEON\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\FLIA PEREZ LEON\\Documents\\ProyecServicio_comunitario\\obj\\",
+        "projectPath": "D:\\Programacion\\Practicas\\ASP.NET\\angel_api_comun\\ProyecServicio_comunitario.csproj",
+        "packagesPath": "C:\\Users\\eduar\\.nuget\\packages\\",
+        "outputPath": "D:\\Programacion\\Practicas\\ASP.NET\\angel_api_comun\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\FLIA PEREZ LEON\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\eduar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://nuget.org/api/v2/": {}
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -42,8 +49,13 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
+            "DotNetEnv": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -78,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
