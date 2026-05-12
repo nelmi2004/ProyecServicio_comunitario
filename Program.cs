@@ -35,6 +35,7 @@ builder.Services.AddScoped<AutopistaService>();
 builder.Services.AddScoped<EstatusService>();
 builder.Services.AddScoped<OrganismoService>();
 builder.Services.AddScoped<PersonalGrupoService>();
+builder.Services.AddScoped<CompanyService>();
 var app = builder.Build();
 
 
