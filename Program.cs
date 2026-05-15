@@ -36,6 +36,12 @@ builder.Services.AddScoped<EstatusService>();
 builder.Services.AddScoped<OrganismoService>();
 builder.Services.AddScoped<PersonalGrupoService>();
 builder.Services.AddScoped<CompanyService>();
+builder.Services.AddScoped<TrasladosEventoService>();
+builder.Services.AddScoped<InvolucradosEventoService>();
+builder.Services.AddScoped<LocalizacionEventoService>();
+builder.Services.AddScoped<ApsEventoService>();
+builder.Services.AddScoped<PersonalEventoService>();
+builder.Services.AddScoped<HerramientasEquipoEventoService>();
 var app = builder.Build();
 
 
