@@ -250,3 +250,8 @@ D:\Programacion\Practicas\ASP.NET\angel_api_comun\obj\Debug\net10.0\ProyecServic
 D:\Programacion\Practicas\ASP.NET\angel_api_comun\obj\Debug\net10.0\ref\ProyecServicio_comunitario.dll
 D:\Programacion\Practicas\ASP.NET\angel_api_comun\bin\Debug\net10.0\ProyecServicio_comunitario.xml
 D:\Programacion\Practicas\ASP.NET\angel_api_comun\obj\Debug\net10.0\ProyecServicio_comunitario.xml
+C:\Users\FLIA PEREZ LEON\Documents\ProyecServicio_comunitario\bin\Debug\net10.0\ProyecServicio_comunitario.xml
+C:\Users\FLIA PEREZ LEON\Documents\ProyecServicio_comunitario\bin\Debug\net10.0\DotNetEnv.dll
+C:\Users\FLIA PEREZ LEON\Documents\ProyecServicio_comunitario\bin\Debug\net10.0\Superpower.dll
+C:\Users\FLIA PEREZ LEON\Documents\ProyecServicio_comunitario\obj\Debug\net10.0\ProyecServicio_comunitario.sourcelink.json
+C:\Users\FLIA PEREZ LEON\Documents\ProyecServicio_comunitario\obj\Debug\net10.0\ProyecServicio_comunitario.xml

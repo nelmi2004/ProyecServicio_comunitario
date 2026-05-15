@@ -8,7 +8,7 @@ namespace ProyecServicio_comunitario.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class CategoriaController : Controller
+    public class CategoriaController: Controller
     {
         public readonly CategoriaService _categoriaService;
 

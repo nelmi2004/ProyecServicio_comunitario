@@ -5,12 +5,20 @@ using ProyecServicio_comunitario.Services;
 
 namespace ProyecServicio_comunitario.Controllers
 {
+/// <summary>
+/// Controlador para la gestión de empresas (Company).
+/// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CompanyController : Controller
     {
+        /// <summary>
+/// Controlador para la gestión de empresas (Company).
+/// </summary>
         public readonly CompanyService _companyService;
-
+/// <summary>
+/// Controlador para la gestión de empresas (Company).
+/// </summary>
         public CompanyController(CompanyService companyService)
         {
             _companyService = companyService;

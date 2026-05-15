@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProyecServicio_comunitario.Models; // Asegúrate de usar tu namespace real
-using ProyecServicio_comunitario.Models.Common; // Para ApiResponse<T>
+using ProyecServicio_comunitario.Models;
+using ProyecServicio_comunitario.Models.Common;
+using ProyecServicio_comunitario.Services;
 
 namespace ProyecServicio_comunitario.Controllers
 {
@@ -9,19 +10,18 @@ namespace ProyecServicio_comunitario.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private readonly AngelDbContext _context;
+        private readonly RolesService _rolesService;
 
-        public RolesController(AngelDbContext context)
+        public RolesController(RolesService rolesService)
         {
-            _context = context;
+            _rolesService = rolesService;
         }
 
         // GET: api/Roles
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Role>>>> GetRoles()
         {
-            // Retorna la lista de roles sin incluir la lista de usuarios para evitar ciclos
-            var roles = await _context.Roles.ToListAsync();
+            var roles = await _rolesService.GetAll();
             return ApiResponse<IEnumerable<Role>>.SuccessResponse(roles, "Roles obtenidos correctamente");
         }
 
@@ -29,7 +29,7 @@ namespace ProyecServicio_comunitario.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Role>>> GetRole(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _rolesService.GetById(id);
 
             if (role == null)
             {
@@ -43,27 +43,20 @@ namespace ProyecServicio_comunitario.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<Role>>> PostRole(Role role)
         {
-            // Validar si ya existe un rol con el mismo nombre
-            bool exists = await _context.Roles
-                .AnyAsync(r => r.Nombre.ToLower() == role.Nombre.ToLower());
-
-            if (exists)
+            try
             {
-                return Conflict(ApiResponse<Role>.ErrorResponse("Conflicto de nombre", $"Ya existe un rol con el nombre '{role.Nombre}'.", 409));
+                var created = await _rolesService.Create(role);
+                return CreatedAtAction(nameof(GetRole), new { id = created.Id },
+                    ApiResponse<Role>.SuccessResponse(created, "Rol creado correctamente", 201));
             }
-
-            if (RoleExists(role.Id))
+            catch (InvalidOperationException ex)
             {
-                return Conflict(ApiResponse<Role>.ErrorResponse("Conflicto de ID", $"Ya existe un rol con el ID '{role.Id}'.", 409));
+                return Conflict(ApiResponse<Role>.ErrorResponse("Conflicto", ex.Message, 409));
             }
-
-            _context.Roles.Add(role);
-
-            await _context.SaveChangesAsync();
-
-
-            return CreatedAtAction(nameof(GetRole), new { id = role.Id }, 
-                ApiResponse<Role>.SuccessResponse(role, "Rol creado correctamente", 201)   );
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, ApiResponse<Role>.ErrorResponse("Error al crear el rol", ex.Message, 500));
+            }   
         }
 
         // PUT: api/Roles/5
@@ -75,52 +68,44 @@ namespace ProyecServicio_comunitario.Controllers
                 return BadRequest(ApiResponse<Role>.ErrorResponse("Error de coincidencia", "El ID no coincide.", 400));
             }
 
-            // Validar que el nombre no choque con otro rol existente
-            bool nameConflict = await _context.Roles
-                .AnyAsync(r => r.Nombre.ToLower() == role.Nombre.ToLower() && r.Id != id);
-
-            if (nameConflict)
-            {
-                return Conflict(ApiResponse<Role>.ErrorResponse("Conflicto de nombre", "Otro rol ya tiene ese nombre.", 409));
-            }
-
-            _context.Entry(role).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var updated = await _rolesService.Update(id, role);
+                return Ok(ApiResponse<Role>.SuccessResponse(updated, "Rol actualizado correctamente"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidOperationException ex)
             {
-                if (!RoleExists(id)) return NotFound(ApiResponse<Role>.ErrorResponse("Rol no encontrado", null, 404));
-                else throw;
+                return Conflict(ApiResponse<Role>.ErrorResponse("Conflicto", ex.Message, 409));
             }
-
-            return Ok(ApiResponse<Role>.SuccessResponse(role, "Rol actualizado correctamente"));
+            catch (KeyNotFoundException)
+            {
+                return NotFound(ApiResponse<Role>.ErrorResponse("Rol no encontrado", null, 404));
+            }
         }
 
         // DELETE: api/Roles/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> DeleteRole(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null) return NotFound(ApiResponse<Role>.ErrorResponse("Rol no encontrado", null, 404));
-            // Validar si hay usuarios asociados antes de borrar
-            bool hasRoles = await _context.Users.AnyAsync(u => u.RoleId == id);
-            if (hasRoles)
+            try
             {
-                return BadRequest(ApiResponse<bool>.ErrorResponse("No se puede eliminar", "No se puede eliminar el perfil porque tiene usuarios asociados.", 400));
+                var deleted = await _rolesService.Delete(id);
+                if (!deleted)
+                {
+                    return NotFound(ApiResponse<bool>.ErrorResponse("Rol no encontrado", null, 404));
+                }
+
+                return Ok(ApiResponse<bool>.SuccessResponse(true, "Rol eliminado correctamente"));
             }
-
-            _context.Roles.Remove(role);
-            await _context.SaveChangesAsync();
-
-            return Ok(ApiResponse<bool>.SuccessResponse(true, "Rol eliminado correctamente"));
-        }
-
-        private bool RoleExists(int id)
-        {
-            return _context.Roles.Any(e => e.Id == id);
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ApiResponse<bool>.ErrorResponse("No se puede eliminar", ex.Message, 400));
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.ErrorResponse("Error al eliminar el rol", ex.Message, 500));
+            }
         }
     }
 }
+

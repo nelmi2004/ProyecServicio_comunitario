@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProyecServicio_comunitario.Models; // Asegúrate de usar tu namespace real
-using ProyecServicio_comunitario.Models.Common; // Para ApiResponse<T>
+using ProyecServicio_comunitario.Models;
+using ProyecServicio_comunitario.Models.Common;
+using ProyecServicio_comunitario.Services;
 
 namespace ProyecServicio_comunitario.Controllers
 {
@@ -9,19 +10,18 @@ namespace ProyecServicio_comunitario.Controllers
     [ApiController]
     public class ProfilesController : ControllerBase
     {
-        private readonly AngelDbContext _context;
+        private readonly ProfileService _profileService;
 
-        public ProfilesController(AngelDbContext context)
+        public ProfilesController(ProfileService profileService)
         {
-            _context = context;
+            _profileService = profileService;
         }
 
         // GET: api/Profiles
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Profile>>>> GetProfiles()
         {
-            // Retorna la lista de perfiles sin incluir la lista de usuarios para evitar ciclos
-            var profiles = await _context.Profiles.ToListAsync();
+            var profiles = await _profileService.GetAll();
             return ApiResponse<IEnumerable<Profile>>.SuccessResponse(profiles, "Perfiles obtenidos correctamente");
         }
 
@@ -29,7 +29,7 @@ namespace ProyecServicio_comunitario.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Profile>>> GetProfile(int id)
         {
-            var profile = await _context.Profiles.FindAsync(id);
+            var profile = await _profileService.GetById(id);
 
             if (profile == null)
             {
@@ -43,31 +43,20 @@ namespace ProyecServicio_comunitario.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<Profile>>> PostProfile(Profile profile)
         {
-            // Validar si ya existe un perfil con el mismo nombre
-            bool exists = await _context.Profiles
-                .AnyAsync(p => p.Nombre.ToLower() == profile.Nombre.ToLower());
-
-            if (exists)
+            try
             {
-                return Conflict(ApiResponse<Profile>.ErrorResponse("Conflicto de nombre", $"Ya existe un perfil con el nombre '{profile.Nombre}'.", 409));
+                var created = await _profileService.Create(profile);
+                return CreatedAtAction(nameof(GetProfile), new { id = created.Id },
+                    ApiResponse<Profile>.SuccessResponse(created, "Perfil creado correctamente", 201));
             }
-
-            if (ProfileExists(profile.Id))
+            catch (InvalidOperationException ex)
             {
-                return Conflict(ApiResponse<Profile>.ErrorResponse("Conflicto de ID", $"Ya existe un perfil con el ID '{profile.Id}'.", 409));
+                return Conflict(ApiResponse<Profile>.ErrorResponse("Conflicto", ex.Message, 409));
             }
-
-            // Valores por defecto para permisos si vienen nulos
-            profile.Read ??= false;
-            profile.Create ??= false;
-            profile.Update ??= false;
-            profile.Delete ??= false;
-
-            _context.Profiles.Add(profile);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetProfile), new { id = profile.Id }, 
-                ApiResponse<Profile>.SuccessResponse(profile, "Perfil creado correctamente", 201)   );
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, ApiResponse<Profile>.ErrorResponse("Error al crear el perfil", ex.Message, 500));
+            }
         }
 
         // PUT: api/Profiles/5
@@ -79,52 +68,44 @@ namespace ProyecServicio_comunitario.Controllers
                 return BadRequest(ApiResponse<Profile>.ErrorResponse("Error de coincidencia", "El ID no coincide.", 400));
             }
 
-            // Validar que el nombre no choque con otro perfil existente
-            bool nameConflict = await _context.Profiles
-                .AnyAsync(p => p.Nombre.ToLower() == profile.Nombre.ToLower() && p.Id != id);
-
-            if (nameConflict)
-            {
-                return Conflict(ApiResponse<Profile>.ErrorResponse("Conflicto de nombre", "Otro perfil ya tiene ese nombre.", 409));
-            }
-
-            _context.Entry(profile).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var updated = await _profileService.Update(id, profile);
+                return Ok(ApiResponse<Profile>.SuccessResponse(updated, "Perfil actualizado correctamente"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidOperationException ex)
             {
-                if (!ProfileExists(id)) return NotFound(ApiResponse<Profile>.ErrorResponse("Perfil no encontrado", null, 404));
-                else throw;
+                return Conflict(ApiResponse<Profile>.ErrorResponse("Conflicto", ex.Message, 409));
             }
-
-            return Ok(ApiResponse<Profile>.SuccessResponse(profile, "Perfil actualizado correctamente"));
+            catch (KeyNotFoundException)
+            {
+                return NotFound(ApiResponse<Profile>.ErrorResponse("Perfil no encontrado", null, 404));
+            }
         }
 
         // DELETE: api/Profiles/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> DeleteProfile(int id)
         {
-            var profile = await _context.Profiles.FindAsync(id);
-            if (profile == null) return NotFound(ApiResponse<Profile>.ErrorResponse("Perfil no encontrado", null, 404));
-            // Validar si hay usuarios asociados antes de borrar
-            bool hasProfiles = await _context.Users.AnyAsync(u => u.ProfileId == id);
-            if (hasProfiles)
+            try
             {
-                return BadRequest(ApiResponse<bool>.ErrorResponse("No se puede eliminar", "No se puede eliminar el perfil porque tiene usuarios asociados.", 400));
+                var deleted = await _profileService.Delete(id);
+                if (!deleted)
+                {
+                    return NotFound(ApiResponse<bool>.ErrorResponse("Perfil no encontrado", null, 404));
+                }
+
+                return Ok(ApiResponse<bool>.SuccessResponse(true, "Perfil eliminado correctamente"));
             }
-
-            _context.Profiles.Remove(profile);
-            await _context.SaveChangesAsync();
-
-            return Ok(ApiResponse<bool>.SuccessResponse(true, "Perfil eliminado correctamente"));
-        }
-
-        private bool ProfileExists(int id)
-        {
-            return _context.Profiles.Any(e => e.Id == id);
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ApiResponse<bool>.ErrorResponse("No se puede eliminar", ex.Message, 400));
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, ApiResponse<bool>.ErrorResponse("Error al eliminar el perfil", ex.Message, 500));
+            }
         }
     }
 }
+

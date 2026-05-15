@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyecServicio_comunitario.Models; // El alias que creamos
+using ProyecServicio_comunitario.Models.Common;
+using ProyecServicio_comunitario.Services;
 
 namespace ProyecServicio_comunitario.Controllers;
 
@@ -9,56 +11,88 @@ namespace ProyecServicio_comunitario.Controllers;
 [ApiController]
 public class EventosController : ControllerBase
 {
-    private readonly AngelDbContext _context;
+    private readonly EventoService _eventoService;
 
-    public EventosController(AngelDbContext context)
+    public EventosController(EventoService eventoService)
     {
-        _context = context;
+        _eventoService = eventoService;
     }
 
     // GET: api/Eventos
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Evento>>> GetEventos()
+    public async Task<ActionResult<ApiResponse<IEnumerable<Evento>>>> GetEventos()
     {
-        return await _context.Eventos.ToListAsync();
+        var result = await _eventoService.GetAll();
+        return Ok(ApiResponse<IEnumerable<Evento>>.SuccessResponse(result.ToList(), "Eventos obtenidos correctamente", 200));
     }
 
     // GET: api/Eventos/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Evento>> GetEvento(Guid id)
+    public async Task<ActionResult<ApiResponse<Evento>>> GetEvento(Guid id)
     {
-        var evento = await _context.Eventos.FindAsync(id);
-        if (evento == null) return NotFound();
-        return evento;
+        var evento = await _eventoService.GetById(id);
+        if (evento == null)
+            return NotFound(ApiResponse<Evento>.ErrorResponse("Evento no encontrado", statusCode: 404));
+
+        return Ok(ApiResponse<Evento>.SuccessResponse(evento, "Evento obtenido correctamente", 200));
     }
 
     // POST: api/Eventos
     [HttpPost]
-    public async Task<ActionResult<Evento>> PostEvento(Evento evento)
+    public async Task<ActionResult<ApiResponse<Evento>>> PostEvento(Evento evento)
     {
-        _context.Eventos.Add(evento);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetEvento), new { id = evento.Id }, evento);
+        try
+        {
+            var created = await _eventoService.Create(evento);
+            return CreatedAtAction(
+                nameof(GetEvento),
+                new { id = created.Id },
+                ApiResponse<Evento>.SuccessResponse(created, "Evento creado exitosamente", 201)
+            );
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(
+                500,
+                ApiResponse<object>.ErrorResponse("Error al crear el evento", ex.Message, 500)
+            );
+        }
     }
 
     // PUT: api/Eventos/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEvento(Guid id, Evento evento)
+    public async Task<ActionResult<ApiResponse<object>>> PutEvento(Guid id, Evento evento)
     {
-        if (id != evento.Id) return BadRequest();
-        _context.Entry(evento).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return NoContent();
+        if (id != evento.Id)
+            return BadRequest(ApiResponse<object>.ErrorResponse("El id del evento no coincide con el id de la ruta", statusCode: 400));
+
+        try
+        {
+            var updated = await _eventoService.Update(id, evento);
+
+            return Ok(ApiResponse<object>.SuccessResponse(null, "Evento actualizado correctamente", 200));
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ApiResponse<object>.ErrorResponse("Error al actualizar el evento", ex.Message, 500));
+        }
     }
 
     // DELETE: api/Eventos/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEvento(Guid id)
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteEvento(Guid id)
     {
-        var evento = await _context.Eventos.FindAsync(id);
-        if (evento == null) return NotFound();
-        _context.Eventos.Remove(evento);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+        var deleted = await _eventoService.Delete(id);
+        if (!deleted)
+            return NotFound(ApiResponse<bool>.ErrorResponse("Evento no encontrado", statusCode: 404));
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true, "Evento eliminado correctamente", 200));
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, ApiResponse<bool>.ErrorResponse("Error al eliminar el evento", ex.Message, 500));
+        }
     }
 }
