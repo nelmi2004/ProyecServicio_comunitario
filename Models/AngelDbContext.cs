@@ -67,31 +67,29 @@ public partial class AngelDbContext : DbContext
 
     public virtual DbSet<Vehiculo> Vehiculos { get; set; }
 
-    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Database=Prueba;Username=postgres;Password=nelmiguel");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasPostgresExtension("pgcrypto");
-
         modelBuilder.Entity<ApsEvento>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("aps_caso_pkey");
 
             entity.ToTable("aps_evento");
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("nextval('aps_caso_id_seq'::regclass)")
-                .HasColumnName("id");
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DetalleAtencion).HasColumnName("detalle_atencion");
             entity.Property(e => e.EstadoPacientePostAps).HasColumnName("estado_paciente_post_aps");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.FechaAtencion)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("fecha_atencion");
             entity.Property(e => e.InvolucradoId).HasColumnName("involucrado_id");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.ApsEventos)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.ApsEventos)
+                .HasForeignKey(d => d.EventoId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("aps_caso_caso_id_fkey");
 
@@ -224,9 +222,7 @@ public partial class AngelDbContext : DbContext
 
             entity.ToTable("eventos");
 
-            entity.HasIndex(e => e.NumeroCaso, "casos_numero_caso_key").IsUnique();
-
-            entity.HasIndex(e => e.FechaSuceso, "idx_casos_fecha");
+            entity.HasIndex(e => e.NumeroEvento, "casos_numero_caso_key").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
@@ -238,9 +234,9 @@ public partial class AngelDbContext : DbContext
                 .HasColumnName("fecha_creacion");
             entity.Property(e => e.FechaSuceso).HasColumnName("fecha_suceso");
             entity.Property(e => e.HoraSuceso).HasColumnName("hora_suceso");
-            entity.Property(e => e.NumeroCaso)
+            entity.Property(e => e.NumeroEvento)
                 .HasMaxLength(20)
-                .HasColumnName("numero_caso");
+                .HasColumnName("numero_evento");
 
             entity.HasOne(d => d.Categoria).WithMany(p => p.Eventos)
                 .HasForeignKey(d => d.CategoriaId)
@@ -249,24 +245,6 @@ public partial class AngelDbContext : DbContext
             entity.HasOne(d => d.Estatus).WithMany(p => p.Eventos)
                 .HasForeignKey(d => d.EstatusId)
                 .HasConstraintName("casos_estatus_id_fkey");
-
-            entity.HasMany(d => d.Vehiculos).WithMany(p => p.Casos)
-                .UsingEntity<Dictionary<string, object>>(
-                    "VehiculosEvento",
-                    r => r.HasOne<Vehiculo>().WithMany()
-                        .HasForeignKey("VehiculoId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("vehiculos_caso_vehiculo_id_fkey"),
-                    l => l.HasOne<Evento>().WithMany()
-                        .HasForeignKey("CasoId")
-                        .HasConstraintName("vehiculos_caso_caso_id_fkey"),
-                    j =>
-                    {
-                        j.HasKey("CasoId", "VehiculoId").HasName("vehiculos_caso_pkey");
-                        j.ToTable("vehiculos_evento");
-                        j.IndexerProperty<Guid>("CasoId").HasColumnName("caso_id");
-                        j.IndexerProperty<int>("VehiculoId").HasColumnName("vehiculo_id");
-                    });
         });
 
         modelBuilder.Entity<GeneralResponseCode>(entity =>
@@ -312,18 +290,18 @@ public partial class AngelDbContext : DbContext
 
         modelBuilder.Entity<HerramientasEquipoEvento>(entity =>
         {
-            entity.HasKey(e => new { e.CasoId, e.HerramientaId }).HasName("herramientas_equipo_caso_pkey");
+            entity.HasKey(e => new { e.HerramientaId, e.EventoId }).HasName("herramientas_equipo_caso_pkey");
 
             entity.ToTable("herramientas_equipo_evento");
 
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
             entity.Property(e => e.HerramientaId).HasColumnName("herramienta_id");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.CantidadUsada)
                 .HasDefaultValue(1)
                 .HasColumnName("cantidad_usada");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.HerramientasEquipoEventos)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.HerramientasEquipoEventos)
+                .HasForeignKey(d => d.EventoId)
                 .HasConstraintName("herramientas_equipo_caso_caso_id_fkey");
 
             entity.HasOne(d => d.Herramienta).WithMany(p => p.HerramientasEquipoEventos)
@@ -338,17 +316,15 @@ public partial class AngelDbContext : DbContext
 
             entity.ToTable("involucrados_evento");
 
-            entity.HasIndex(e => e.CasoId, "idx_involucrados_caso_id");
+            entity.HasIndex(e => e.EventoId, "idx_involucrados_caso_id");
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("nextval('involucrados_caso_id_seq'::regclass)")
-                .HasColumnName("id");
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cedula)
                 .HasMaxLength(20)
                 .HasColumnName("cedula");
             entity.Property(e => e.Edad).HasColumnName("edad");
             entity.Property(e => e.EstadoPaciente).HasColumnName("estado_paciente");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.NombreCompleto)
                 .HasMaxLength(150)
                 .HasColumnName("nombre_completo");
@@ -356,21 +332,23 @@ public partial class AngelDbContext : DbContext
                 .HasMaxLength(1)
                 .HasColumnName("sexo");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.InvolucradosEventos)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.InvolucradosEventos)
+                .HasForeignKey(d => d.EventoId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("involucrados_caso_caso_id_fkey");
         });
 
         modelBuilder.Entity<LocalizacionEvento>(entity =>
         {
-            entity.HasKey(e => e.CasoId).HasName("localizacion_caso_pkey");
+            entity.HasKey(e => e.EventoId).HasName("localizacion_caso_pkey");
 
             entity.ToTable("localizacion_evento");
 
-            entity.Property(e => e.CasoId)
+            entity.HasIndex(e => e.EventoId, "idx_localizacion_evento_id");
+
+            entity.Property(e => e.EventoId)
                 .ValueGeneratedNever()
-                .HasColumnName("caso_id");
+                .HasColumnName("evento_id");
             entity.Property(e => e.AutopistaId).HasColumnName("autopista_id");
             entity.Property(e => e.DireccionExacta).HasColumnName("direccion_exacta");
             entity.Property(e => e.Latitud)
@@ -385,8 +363,8 @@ public partial class AngelDbContext : DbContext
                 .HasForeignKey(d => d.AutopistaId)
                 .HasConstraintName("localizacion_caso_autopista_id_fkey");
 
-            entity.HasOne(d => d.Caso).WithOne(p => p.LocalizacionEvento)
-                .HasForeignKey<LocalizacionEvento>(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithOne(p => p.LocalizacionEvento)
+                .HasForeignKey<LocalizacionEvento>(d => d.EventoId)
                 .HasConstraintName("localizacion_caso_caso_id_fkey");
         });
 
@@ -449,16 +427,16 @@ public partial class AngelDbContext : DbContext
 
         modelBuilder.Entity<OrganismosEvento>(entity =>
         {
-            entity.HasKey(e => new { e.CasoId, e.OrganismoId }).HasName("organismos_caso_pkey");
+            entity.HasKey(e => new { e.OrganismoId, e.EventoId }).HasName("organismos_caso_pkey");
 
             entity.ToTable("organismos_evento");
 
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
             entity.Property(e => e.OrganismoId).HasColumnName("organismo_id");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.Observaciones).HasColumnName("observaciones");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.OrganismosEventos)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.OrganismosEventos)
+                .HasForeignKey(d => d.EventoId)
                 .HasConstraintName("organismos_caso_caso_id_fkey");
 
             entity.HasOne(d => d.Organismo).WithMany(p => p.OrganismosEventos)
@@ -517,18 +495,18 @@ public partial class AngelDbContext : DbContext
 
         modelBuilder.Entity<PersonalEvento>(entity =>
         {
-            entity.HasKey(e => new { e.CasoId, e.PersonalId }).HasName("personal_caso_pkey");
+            entity.HasKey(e => new { e.PersonalId, e.EventoId }).HasName("personal_caso_pkey");
 
             entity.ToTable("personal_evento");
 
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
             entity.Property(e => e.PersonalId).HasColumnName("personal_id");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.RolEnSitio)
                 .HasMaxLength(50)
                 .HasColumnName("rol_en_sitio");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.PersonalEventos)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.PersonalEventos)
+                .HasForeignKey(d => d.EventoId)
                 .HasConstraintName("personal_caso_caso_id_fkey");
 
             entity.HasOne(d => d.Personal).WithMany(p => p.PersonalEventos)
@@ -584,16 +562,16 @@ public partial class AngelDbContext : DbContext
 
             entity.ToTable("servicios");
 
-            entity.HasIndex(e => e.CasoId, "idx_reportes_caso_id");
+            entity.HasIndex(e => e.EventoId, "idx_reportes_caso_id");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
-            entity.Property(e => e.CasoId).HasColumnName("caso_id");
             entity.Property(e => e.EstatusProcesamiento)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("'pendiente'::character varying")
                 .HasColumnName("estatus_procesamiento");
+            entity.Property(e => e.EventoId).HasColumnName("evento_id");
             entity.Property(e => e.FechaRegistro)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("fecha_registro");
@@ -603,8 +581,8 @@ public partial class AngelDbContext : DbContext
             entity.Property(e => e.TextoNatural).HasColumnName("texto_natural");
             entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
 
-            entity.HasOne(d => d.Caso).WithMany(p => p.Servicios)
-                .HasForeignKey(d => d.CasoId)
+            entity.HasOne(d => d.Evento).WithMany(p => p.Servicios)
+                .HasForeignKey(d => d.EventoId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("reportes_caso_id_fkey");
 
@@ -634,9 +612,7 @@ public partial class AngelDbContext : DbContext
 
             entity.ToTable("traslados_evento");
 
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("nextval('traslados_caso_id_seq'::regclass)")
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CentroSaludId).HasColumnName("centro_salud_id");
             entity.Property(e => e.InvolucradoId).HasColumnName("involucrado_id");
             entity.Property(e => e.Observaciones).HasColumnName("observaciones");
@@ -703,10 +679,11 @@ public partial class AngelDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Condicion)
-                .HasMaxLength(20)
-                .HasDefaultValueSql("'operativo'::character varying")
+                .HasMaxLength(50)
                 .HasColumnName("condicion");
-            entity.Property(e=> e.StatusVehiculo).HasColumnType("boolean").HasDefaultValue(true).HasColumnName("status_vehiculo");
+            entity.Property(e => e.EstatusVehiculo)
+                .HasDefaultValue(true)
+                .HasColumnName("estatus_vehiculo");
             entity.Property(e => e.Modelo)
                 .HasMaxLength(50)
                 .HasColumnName("modelo");
@@ -716,6 +693,24 @@ public partial class AngelDbContext : DbContext
             entity.Property(e => e.Tipo)
                 .HasMaxLength(30)
                 .HasColumnName("tipo");
+
+            entity.HasMany(d => d.Eventos).WithMany(p => p.Vehiculos)
+                .UsingEntity<Dictionary<string, object>>(
+                    "VehiculosEvento",
+                    r => r.HasOne<Evento>().WithMany()
+                        .HasForeignKey("EventoId")
+                        .HasConstraintName("vehiculos_caso_caso_id_fkey"),
+                    l => l.HasOne<Vehiculo>().WithMany()
+                        .HasForeignKey("VehiculoId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("vehiculos_caso_vehiculo_id_fkey"),
+                    j =>
+                    {
+                        j.HasKey("VehiculoId", "EventoId").HasName("vehiculos_caso_pkey");
+                        j.ToTable("vehiculos_evento");
+                        j.IndexerProperty<int>("VehiculoId").HasColumnName("vehiculo_id");
+                        j.IndexerProperty<Guid>("EventoId").HasColumnName("evento_id");
+                    });
         });
 
         OnModelCreatingPartial(modelBuilder);

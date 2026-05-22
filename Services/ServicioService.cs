@@ -39,7 +39,7 @@ namespace ProyecServicio_comunitario.Services
             if (existing == null) return null;
 
             // No actualizar claves
-            existing.CasoId = servicio.CasoId;
+            existing.EventoId = servicio.EventoId;
             existing.NumeroReporte = servicio.NumeroReporte;
             existing.TextoNatural = servicio.TextoNatural;
             existing.UsuarioId = servicio.UsuarioId;

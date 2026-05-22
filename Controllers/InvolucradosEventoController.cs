@@ -75,7 +75,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json a la entidad involucrado
                 InvolucradosEvento involucradoEvento = new InvolucradosEvento()
                 {
-                    CasoId = Guid.Parse(involucradosEvento.GetProperty("CasoId").GetString()),
+                    EventoId = Guid.Parse(involucradosEvento.GetProperty("CasoId").GetString()),
                     Cedula = involucradosEvento.GetProperty("Cedula").GetString(),
                     NombreCompleto = involucradosEvento.GetProperty("NombreCompleto").GetString(),
                     Sexo = char.Parse(involucradosEvento.GetProperty("Sexo").GetString()),
@@ -114,7 +114,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json a la entidad involucrado
                 InvolucradosEvento involucradoEvento = new InvolucradosEvento()
                 {
-                    CasoId = Guid.Parse(involucradosEvento.GetProperty("CasoId").GetString()),
+                    EventoId = Guid.Parse(involucradosEvento.GetProperty("CasoId").GetString()),
                     Cedula = involucradosEvento.GetProperty("Cedula").GetString(),
                     NombreCompleto = involucradosEvento.GetProperty("NombreCompleto").GetString(),
                     Sexo = char.Parse(involucradosEvento.GetProperty("Sexo").GetString()),
@@ -151,7 +151,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json a la entidad involucrado
                 InvolucradosEvento involucradoEvento = new InvolucradosEvento()
                 {
-                    CasoId = involucradosEvento.TryGetProperty("CasoId", out var CasoID)? Guid.Parse(CasoID.GetString()): null,
+                    EventoId = involucradosEvento.TryGetProperty("CasoId", out var CasoID)? Guid.Parse(CasoID.GetString()): null,
                     Cedula = involucradosEvento.TryGetProperty("Cedula", out var Cedula)? Cedula.GetString(): null,
                     NombreCompleto = involucradosEvento.TryGetProperty("NombreCompleto", out var NombreCompleto)? NombreCompleto.GetString(): null,
                     Sexo = involucradosEvento.TryGetProperty("Sexo", out var Sexo)? char.Parse(Sexo.GetString()): null,

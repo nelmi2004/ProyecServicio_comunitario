@@ -13,11 +13,11 @@ public partial class Vehiculo
 
     public string? Modelo { get; set; }
 
-    public string? Condicion { get; set; }
+    public bool? EstatusVehiculo { get; set; }
 
-    public bool StatusVehiculo { get; set; }
+    public string? Condicion { get; set; }
 
     public virtual ICollection<TrasladosEvento> TrasladosEventos { get; set; } = new List<TrasladosEvento>();
 
-    public virtual ICollection<Evento> Casos { get; set; } = new List<Evento>();
+    public virtual ICollection<Evento> Eventos { get; set; } = new List<Evento>();
 }

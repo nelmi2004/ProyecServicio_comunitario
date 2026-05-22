@@ -26,5 +26,6 @@ public partial class User
     public virtual Profile? Profile { get; set; }
 
     public virtual Role? Role { get; set; }
+
     public virtual ICollection<Servicio> Servicios { get; set; } = new List<Servicio>();
 }

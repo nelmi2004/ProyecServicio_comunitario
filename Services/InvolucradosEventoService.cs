@@ -39,8 +39,8 @@ namespace ProyecServicio_comunitario.Services
             //buscamos el involucrado
             var existingInvolucradosEvento = await _context.InvolucradosEventos.FirstOrDefaultAsync(t => t.Id == id);
             if (existingInvolucradosEvento == null) return null;
-            //En caso de existir actualizamos solo los datos enviados.
-            if (involucradosEvento.CasoId != null) existingInvolucradosEvento.CasoId = involucradosEvento.CasoId;   
+            //En evento de existir actualizamos solo los datos enviados.
+            if (involucradosEvento.EventoId != null) existingInvolucradosEvento.EventoId = involucradosEvento.EventoId;   
             if (involucradosEvento.Cedula != null) existingInvolucradosEvento.Cedula = involucradosEvento.Cedula;
             if (involucradosEvento.NombreCompleto != null) existingInvolucradosEvento.NombreCompleto = involucradosEvento.NombreCompleto;
             if (involucradosEvento.Sexo != null) existingInvolucradosEvento.Sexo = involucradosEvento.Sexo;

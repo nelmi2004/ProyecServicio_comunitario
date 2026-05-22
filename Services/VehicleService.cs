@@ -33,9 +33,9 @@ namespace ProyecServicio_comunitario.Services
                 Placa = vehicle.placa,
                 Modelo = vehicle.modelo,
                 Tipo = vehicle.tipo,
-                StatusVehiculo = (bool) vehicle.estado,
+                EstatusVehiculo = vehicle.estado,
                 Condicion = vehicle.condicion
-
+    
             };
             //Guarda en la base de datos
             _context.Vehiculos.Add(newVehicle);
@@ -51,8 +51,8 @@ namespace ProyecServicio_comunitario.Services
                 Placa = vehicle.placa,
                 Modelo = vehicle.modelo,
                 Tipo = vehicle.tipo,
-                StatusVehiculo = vehicle.estado,
-                Condicion = vehicle.condicion
+              //  StatusVehiculo = vehicle.estado,
+              //  Condicion = vehicle.condicion
             };
             //Guarda en la base de datos
             _context.Vehiculos.Update(newVehicle);
@@ -78,10 +78,10 @@ namespace ProyecServicio_comunitario.Services
                 vehicleDb.Tipo = vehicle.tipo;
 
             if (!string.IsNullOrWhiteSpace(vehicle.condicion))
-                vehicleDb.Condicion = vehicle.condicion;
+              //  vehicleDb.Condicion = vehicle.condicion;
 
             if (vehicle.estado.HasValue)
-                vehicleDb.StatusVehiculo = vehicle.estado.Value;
+               // vehicleDb.StatusVehiculo = vehicle.estado.Value;
 
             await _context.SaveChangesAsync();
             return vehicle;

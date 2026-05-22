@@ -79,7 +79,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json al modelo de ApsEvento
                 ApsEvento newApsEvento = new ApsEvento()
                 {
-                    CasoId = Guid.Parse(ApsEventoJson.GetProperty("CasoId").GetString()),
+                    EventoId = Guid.Parse(ApsEventoJson.GetProperty("CasoId").GetString()),
                     InvolucradoId = ApsEventoJson.GetProperty("InvolucradoId").GetInt32(),
                     DetalleAtencion = ApsEventoJson.GetProperty("DetalleAtencion").GetString(),
                     EstadoPacientePostAps = ApsEventoJson.GetProperty("EstadoPacientePostAps").GetString(),
@@ -106,7 +106,7 @@ namespace ProyecServicio_comunitario.Controllers
         /// <remarks>
         /// Ejemplo de uso:
         /// {
-        ///     "CasoId": "f778e00e-a225-4870-83ae-18ac050ec1c5",
+        ///     "EventoId": "f778e00e-a225-4870-83ae-18ac050ec1c5",
         ///     "InvolucradoId": 2,
         ///     "DetalleAtencion": "Paciente en estado con traumatismo cerebral, recibira tratamiento de urgencia",
         ///     "EstadoPacientePostAps": "Fallecido",
@@ -123,7 +123,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json al modelo de ApsEvento
                 ApsEvento newApsEvento = new ApsEvento()
                 {
-                    CasoId = Guid.Parse(ApsEventoJson.GetProperty("CasoId").GetString()),
+                    EventoId = Guid.Parse(ApsEventoJson.GetProperty("EventoId").GetString()),
                     InvolucradoId = ApsEventoJson.GetProperty("InvolucradoId").GetInt32(),
                     DetalleAtencion = ApsEventoJson.GetProperty("DetalleAtencion").GetString(),
                     EstadoPacientePostAps = ApsEventoJson.GetProperty("EstadoPacientePostAps").GetString(),
@@ -163,7 +163,7 @@ namespace ProyecServicio_comunitario.Controllers
                 //mapeo del json al modelo de ApsEvento
                 ApsEvento newApsEvento = new ApsEvento()
                 {
-                    CasoId = ApsEventoJson.TryGetProperty("CasoId", out var CasoID)? Guid.Parse(CasoID.GetString()): null,
+                    EventoId = ApsEventoJson.TryGetProperty("EventoId", out var EventoID)? Guid.Parse(EventoID.GetString()): null,
                     InvolucradoId = ApsEventoJson.TryGetProperty("InvolucradoId", out var InvolucradoID)? InvolucradoID.GetInt32(): -1,
                     DetalleAtencion = ApsEventoJson.TryGetProperty("DetalleAtencion", out var DetalleAtencion)? DetalleAtencion.GetString(): null,
                     EstadoPacientePostAps = ApsEventoJson.TryGetProperty("EstadoPacientePostAps", out var EstadoPacientePostAps)? EstadoPacientePostAps.GetString(): null,

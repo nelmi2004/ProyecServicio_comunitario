@@ -77,7 +77,7 @@ namespace ProyecServicio_comunitario.Controllers
             {
                 HerramientasEquipoEvento newHerramientasEquipoEvento = new HerramientasEquipoEvento()
                 {
-                    CasoId = Guid.Parse(herramientasEquipoEventoJson.GetProperty("CasoId").GetString()!),
+                    EventoId = Guid.Parse(herramientasEquipoEventoJson.GetProperty("CasoId").GetString()!),
                     HerramientaId = herramientasEquipoEventoJson.GetProperty("HerramientaId").GetInt32(),
                     CantidadUsada = herramientasEquipoEventoJson.GetProperty("CantidadUsada").GetInt32()
                 };

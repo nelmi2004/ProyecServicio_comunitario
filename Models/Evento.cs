@@ -7,7 +7,7 @@ public partial class Evento
 {
     public Guid Id { get; set; }
 
-    public string NumeroCaso { get; set; } = null!;
+    public string NumeroEvento { get; set; } = null!;
 
     public DateOnly FechaSuceso { get; set; }
 

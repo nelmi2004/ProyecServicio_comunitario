@@ -79,7 +79,7 @@ namespace ProyecServicio_comunitario.Controllers
             {
                 LocalizacionEvento localizacionEvento = new LocalizacionEvento()
                 {
-                    CasoId = Guid.Parse(localizacionEventoJson.GetProperty("CasoId").GetString()!),
+                    EventoId = Guid.Parse(localizacionEventoJson.GetProperty("CasoId").GetString()!),
                     AutopistaId = localizacionEventoJson.GetProperty("AutopistaId").GetInt32(),
                     DireccionExacta = localizacionEventoJson.GetProperty("DireccionExacta").GetString(),
                     PuntoReferencia = localizacionEventoJson.GetProperty("PuntoReferencia").GetString(),

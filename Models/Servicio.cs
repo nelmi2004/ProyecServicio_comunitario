@@ -7,7 +7,7 @@ public partial class Servicio
 {
     public Guid Id { get; set; }
 
-    public Guid? CasoId { get; set; }
+    public Guid? EventoId { get; set; }
 
     public string NumeroReporte { get; set; } = null!;
 
@@ -19,7 +19,7 @@ public partial class Servicio
 
     public DateTime? FechaRegistro { get; set; }
 
-    public virtual Evento? Caso { get; set; }
+    public virtual Evento? Evento { get; set; }
 
     public virtual User? Usuario { get; set; }
 }

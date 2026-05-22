@@ -5,7 +5,7 @@ namespace ProyecServicio_comunitario.Models;
 
 public partial class LocalizacionEvento
 {
-    public Guid CasoId { get; set; }
+    public Guid EventoId { get; set; }
 
     public int? AutopistaId { get; set; }
 
@@ -19,5 +19,5 @@ public partial class LocalizacionEvento
 
     public virtual Autopista? Autopista { get; set; }
 
-    public virtual Evento Caso { get; set; } = null!;
+    public virtual Evento Evento { get; set; } = null!;
 }

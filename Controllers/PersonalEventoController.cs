@@ -77,7 +77,7 @@ namespace ProyecServicio_comunitario.Controllers
             {
                 PersonalEvento newPersonalEvento = new PersonalEvento()
                 {
-                    CasoId = Guid.Parse(personalEventoJson.GetProperty("CasoId").GetString()!),
+                    EventoId = Guid.Parse(personalEventoJson.GetProperty("CasoId").GetString()!),
                     PersonalId = personalEventoJson.GetProperty("PersonalId").GetInt32(),
                     RolEnSitio = personalEventoJson.GetProperty("RolEnSitio").GetString()
                 };

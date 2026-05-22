@@ -89,8 +89,8 @@ namespace ProyecServicio_comunitario.Controllers
                     placa = createdVehicle.Placa,
                     modelo = createdVehicle.Modelo,
                     tipo = createdVehicle.Tipo,
-                    estado = createdVehicle.StatusVehiculo,
-                    condicion = createdVehicle.Condicion
+                   // estado = createdVehicle.StatusVehiculo,
+                   // condicion = createdVehicle.Condicion
                 };
 
                 return CreatedAtAction(nameof(GetById), new { id = createdVehicle.Id }, ApiResponse<vehicleResponseDto>.SuccessResponse(responseDto, "Vehículo creado exitosamente", 201));

@@ -24,9 +24,9 @@ namespace ProyecServicio_comunitario.Services
 
         public async Task<ApsEvento> Create(ApsEvento entity) 
         {
-            //Validamos que el id del caso sea el mismo que el id del involucrado
-            var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.CasoId).FirstOrDefaultAsync();
-            if (involucradoCasoId != entity.CasoId) return null;
+            //Validamos que el id del evento sea el mismo que el id del involucrado
+            var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.EventoId).FirstOrDefaultAsync();
+            if (involucradoCasoId != entity.EventoId) return null;
             _context.ApsEventos.Add(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -35,8 +35,8 @@ namespace ProyecServicio_comunitario.Services
         public async Task<ApsEvento> Update(int id,ApsEvento entity) 
         {
             entity.Id = id;
-            var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.CasoId).FirstOrDefaultAsync();
-            if (involucradoCasoId != entity.CasoId) return null;
+            var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.EventoId).FirstOrDefaultAsync();
+            if (involucradoCasoId != entity.EventoId) return null;
             _context.ApsEventos.Update(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -49,13 +49,13 @@ namespace ProyecServicio_comunitario.Services
             if (aps == null) return null;
 
             //actualizamos los campos que sean diferentes de null
-            if (entity.CasoId != null) aps.CasoId = entity.CasoId;
+            if (entity.EventoId != null) aps.EventoId = entity.EventoId;
             if (entity.DetalleAtencion != null) aps.DetalleAtencion = entity.DetalleAtencion;
             if (entity.EstadoPacientePostAps != null) aps.EstadoPacientePostAps = entity.EstadoPacientePostAps;
             if (entity.InvolucradoId != -1) {
-                var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.CasoId).FirstOrDefaultAsync();
-                //Validamos que el id del caso sea el mismo que el id del involucrado
-                if (involucradoCasoId != entity.CasoId) return null;
+                var involucradoCasoId = await _context.InvolucradosEventos.Where(i => i.Id == entity.InvolucradoId).Select(involucrado => involucrado.EventoId).FirstOrDefaultAsync();
+                //Validamos que el id del evento sea el mismo que el id del involucrado
+                if (involucradoCasoId != entity.EventoId) return null;
                 //asignamos el id del involucrado
                 aps.InvolucradoId = entity.InvolucradoId; 
             }

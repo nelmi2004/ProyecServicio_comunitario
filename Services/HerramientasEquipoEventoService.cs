@@ -16,10 +16,10 @@ namespace ProyecServicio_comunitario.Services
             return await _context.HerramientasEquipoEventos.ToListAsync();
         }
 
-        public async Task<HerramientasEquipoEvento?> GetById(Guid casoId, int herramientaId)
+        public async Task<HerramientasEquipoEvento?> GetById(Guid EventoId, int herramientaId)
         {
             HerramientasEquipoEvento? herramientasEquipoEvento = await _context.HerramientasEquipoEventos
-                .FirstOrDefaultAsync(he => he.CasoId == casoId && he.HerramientaId == herramientaId);
+                .FirstOrDefaultAsync(he => he.EventoId == EventoId && he.HerramientaId == herramientaId);
             return herramientasEquipoEvento;
         }
 
@@ -30,10 +30,10 @@ namespace ProyecServicio_comunitario.Services
             return herramientasEquipoEvento;
         }
 
-        public async Task<HerramientasEquipoEvento?> Update(Guid casoId, int herramientaId, HerramientasEquipoEvento herramientasEquipoEvento)
+        public async Task<HerramientasEquipoEvento?> Update(Guid EventoId, int herramientaId, HerramientasEquipoEvento herramientasEquipoEvento)
         {
             var existingHerramientasEquipoEvento = await _context.HerramientasEquipoEventos
-                .FirstOrDefaultAsync(he => he.CasoId == casoId && he.HerramientaId == herramientaId);
+                .FirstOrDefaultAsync(he => he.EventoId == EventoId && he.HerramientaId == herramientaId);
 
             if (existingHerramientasEquipoEvento == null)
             {
@@ -42,7 +42,7 @@ namespace ProyecServicio_comunitario.Services
 
             // Actualizamos las propiedades del objeto existente
             existingHerramientasEquipoEvento.CantidadUsada = herramientasEquipoEvento.CantidadUsada;
-            // Las claves (CasoId, HerramientaId) no se actualizan ya que son parte de la clave primaria
+            // Las claves (EventoId, HerramientaId) no se actualizan ya que son parte de la clave primaria
 
             _context.HerramientasEquipoEventos.Update(existingHerramientasEquipoEvento);
             await _context.SaveChangesAsync();
@@ -51,10 +51,10 @@ namespace ProyecServicio_comunitario.Services
 
         
 
-        public async Task<bool> Delete(Guid casoId, int herramientaId)
+        public async Task<bool> Delete(Guid EventoId, int herramientaId)
         {
             var herramientasEquipoEvento = await _context.HerramientasEquipoEventos
-                .FirstOrDefaultAsync(he => he.CasoId == casoId && he.HerramientaId == herramientaId);
+                .FirstOrDefaultAsync(he => he.EventoId == EventoId && he.HerramientaId == herramientaId);
 
             if (herramientasEquipoEvento == null)
             {

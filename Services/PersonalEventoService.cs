@@ -16,9 +16,9 @@ namespace ProyecServicio_comunitario.Services
             return await _context.PersonalEventos.ToListAsync();
         }
 
-        public async Task<PersonalEvento?> GetById(Guid casoId, int personalId)
+        public async Task<PersonalEvento?> GetById(Guid eventoId, int personalId)
         {
-            PersonalEvento? personalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.CasoId == casoId && pe.PersonalId == personalId);
+            PersonalEvento? personalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.EventoId == eventoId  && pe.PersonalId == personalId);
             return personalEvento;
         }
 
@@ -29,9 +29,9 @@ namespace ProyecServicio_comunitario.Services
             return personalEvento;
         }
 
-        public async Task<PersonalEvento?> Update(Guid casoId, int personalId, PersonalEvento personalEvento)
+        public async Task<PersonalEvento?> Update(Guid eventoId, int personalId, PersonalEvento personalEvento)
         {
-            var existingPersonalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.CasoId == casoId && pe.PersonalId == personalId);
+            var existingPersonalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.EventoId == eventoId && pe.PersonalId == personalId);
 
             if (existingPersonalEvento == null)
             {
@@ -40,7 +40,7 @@ namespace ProyecServicio_comunitario.Services
 
             // Actualizamos las propiedades del objeto existente
             existingPersonalEvento.RolEnSitio = personalEvento.RolEnSitio;
-            // Las claves (CasoId, PersonalId) no se actualizan ya que son parte de la clave primaria
+            // Las claves (EventoId, PersonalId) no se actualizan ya que son parte de la clave primaria
 
             _context.PersonalEventos.Update(existingPersonalEvento);
             await _context.SaveChangesAsync();
@@ -49,9 +49,9 @@ namespace ProyecServicio_comunitario.Services
 
         
 
-        public async Task<bool> Delete(Guid casoId, int personalId)
+        public async Task<bool> Delete(Guid eventoId, int personalId)
         {
-            var personalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.CasoId == casoId && pe.PersonalId == personalId);
+            var personalEvento = await _context.PersonalEventos.FirstOrDefaultAsync(pe => pe.EventoId == eventoId && pe.PersonalId == personalId);
 
             if (personalEvento == null)
             {

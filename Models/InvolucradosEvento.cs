@@ -7,7 +7,7 @@ public partial class InvolucradosEvento
 {
     public int Id { get; set; }
 
-    public Guid? CasoId { get; set; }
+    public Guid? EventoId { get; set; }
 
     public string? Cedula { get; set; }
 
@@ -21,7 +21,7 @@ public partial class InvolucradosEvento
 
     public virtual ICollection<ApsEvento> ApsEventos { get; set; } = new List<ApsEvento>();
 
-    public virtual Evento? Caso { get; set; }
+    public virtual Evento? Evento { get; set; }
 
     public virtual ICollection<TrasladosEvento> TrasladosEventos { get; set; } = new List<TrasladosEvento>();
 }

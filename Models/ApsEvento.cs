@@ -7,7 +7,7 @@ public partial class ApsEvento
 {
     public int Id { get; set; }
 
-    public Guid? CasoId { get; set; }
+    public Guid? EventoId { get; set; }
 
     public int? InvolucradoId { get; set; }
 
@@ -17,7 +17,7 @@ public partial class ApsEvento
 
     public DateTime? FechaAtencion { get; set; }
 
-    public virtual Evento? Caso { get; set; }
+    public virtual Evento? Evento { get; set; }
 
     public virtual InvolucradosEvento? Involucrado { get; set; }
 }

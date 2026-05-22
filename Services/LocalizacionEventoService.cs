@@ -17,9 +17,9 @@ namespace ProyecServicio_comunitario.Services
             return await _context.LocalizacionEventos.ToListAsync();
         }
 
-        public async Task<LocalizacionEvento?> GetById(Guid casoId)
+        public async Task<LocalizacionEvento?> GetById(Guid eventoId)
         {
-            LocalizacionEvento? localizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.CasoId == casoId);
+            LocalizacionEvento? localizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.EventoId == eventoId);
             return localizacionEvento;
         }
 
@@ -30,17 +30,17 @@ namespace ProyecServicio_comunitario.Services
             return localizacionEvento;
         }
 
-        public async Task<LocalizacionEvento?> Update(Guid casoId, LocalizacionEvento localizacionEvento)
+        public async Task<LocalizacionEvento?> Update(Guid eventoId, LocalizacionEvento localizacionEvento)
         {
-            localizacionEvento.CasoId = casoId;
+            localizacionEvento.EventoId = eventoId;
             _context.LocalizacionEventos.Update(localizacionEvento);
             await _context.SaveChangesAsync();
             return localizacionEvento;
         }
 
-        public async Task<LocalizacionEvento?> PartialUpdate(Guid casoId, LocalizacionEvento localizacionEvento)
+        public async Task<LocalizacionEvento?> PartialUpdate(Guid eventoId, LocalizacionEvento localizacionEvento)
         {
-            var existingLocalizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.CasoId == casoId);
+            var existingLocalizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.EventoId == eventoId);
             if (existingLocalizacionEvento == null)
             {
                 return null;
@@ -72,9 +72,9 @@ namespace ProyecServicio_comunitario.Services
             return existingLocalizacionEvento;
         }
 
-        public async Task<bool> Delete(Guid casoId)
+        public async Task<bool> Delete(Guid eventoId)
         {
-            var localizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.CasoId == casoId);
+            var localizacionEvento = await _context.LocalizacionEventos.FirstOrDefaultAsync(l => l.EventoId == eventoId);
             if (localizacionEvento == null)
             {
                 return false;
